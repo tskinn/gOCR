@@ -50,28 +50,47 @@ func (weights *WeightMap) getWinner(letter [][]float64) int {
 			winner = i
 		}
 	}
-	fmt.Println(winner)
+	//fmt.Println(winner)
 	return winner
 }
 
-func (weights *WeightMap) Update(rate float64, distance int, const letter [][]int) {
-	updateChecker := make([][]bool, len(letter))
+func (weights *WeightMap) Update(rate float64, distance int, letter [][]int) {
+	updateChecker := make([][]int, len(letter))
 	for i := range letter {
-		updateChecker[i] = make([]bool, len(letter[i]))
+		updateChecker[i] = make([]int, len(letter[i]))
 		for j := range letter[i] {
-			updateChecker[i][j] = bool(letter[i][j])
+			updateChecker[i][j] = int(letter[i][j])
 		}
 	}
-	for i := 0; i < distance; i++ {
-		for x := 0; x < len(letter); x++ {
-			for y := 0; y < len(letter[x]); y++ {
-				if isNeighbor(i, updateChecker) {
-					updateChecker[x][y] = true
-				}
-			} // I dont know how to find the right neighbors
-		}   // maybe have a function that retures a list of tuples that are neighbors
-	}     // of a given dot and update them if they havent been already
-}       // or make a list all the neighbors first and update afterwards
+	for x := 0; x < len(letter); x++ {
+		for y := 0; y < len(letter[x]); y++ {
+			//updateChecker[x][y] = distToNeigh(letter, x, y)
+			fmt.Println("Shortest distance: ", distToNeigh(letter, x, y))
+		}
+	}
+}
+
+func distToNeigh(letter [][]int, x, y int) int {
+	shortestDist := 999999
+	if letter[x][y] == 1 {
+		return 0
+	}
+	for i := range letter {
+		for j := range letter[i] {
+			dist := 99999
+			if letter[i][j]  == 1{
+				dist = int(math.Sqrt(math.Pow(float64((i-x)), 2.0) + math.Pow(float64((j-y)), 2.0)))
+			}
+			if dist < shortestDist {
+				shortestDist = dist
+			}
+			if shortestDist == 0 {
+				return 0
+			}
+		}
+	}
+	return shortestDist
+}
 
 func (weights *WeightMap) print() {
 	for i := range *weights {
@@ -155,4 +174,5 @@ func main() {
 	for i := range lettersJSON {
 		weightMap.getWinner(lettersJSON[i].getPixels())
 	}
+	weightMap.Update(1.0, 10, lettersJSON[0].Pixels)
 }
