@@ -13,8 +13,8 @@ import (
 
 type WeightMap [][][]float64
 
-type LetterStruct struct {
-	Letter  string `json:"letter"`
+type Letter struct {
+  Value string `json:"letter"`
 	Version string `json:"version"`
 	Rows    int    `json:"rows"`
 	Columns int    `json:"cols"`
@@ -50,7 +50,7 @@ func (weights *WeightMap) getWinner(letter [][]float64) int {
 			winner = i
 		}
 	}
-	fmt.Println(winner)
+	//fmt.Println(winner)
 	return winner
 }
 
@@ -62,16 +62,16 @@ func (weights *WeightMap) print() {
 	}
 }
 
-func getLettersJSON(filename string) []LetterStruct {
+func getLettersJSON(filename string) []Letter {
 	// Open file containing letters
 	file, er := ioutil.ReadFile(filename)
 	if er != nil {
 		fmt.Println("File IO error!")
 	}
-	var allLetters []LetterStruct // list of letters structs
+	var allLetters []Letter // list of letters structs
 	dec := json.NewDecoder(strings.NewReader(string(file)))
 	for {
-		var m LetterStruct
+		var m Letter
 		if err := dec.Decode(&m); err == io.EOF { // decode JSON
 			break
 		} else if err != nil {
@@ -82,39 +82,39 @@ func getLettersJSON(filename string) []LetterStruct {
 	return allLetters
 }
 
-func print(letters []LetterStruct) {
+func print(letters []Letter) {
 	for _, letter := range letters {
 		letter.print()
 	}
 }
 
-func getNumberOfLetters(letters []LetterStruct) int {
+func getNumberOfLetters(letters []Letter) int {
 	ls := make([]string, 0)
 	var isIn bool
 	for i := range letters {
 		isIn = false
 		for j := range ls {
-			if letters[i].Letter == ls[j] {
+			if letters[i].Value == ls[j] {
 				isIn = true
 				break
 			}
 		}
 		if !isIn {
-			ls = append(ls, letters[i].Letter)
+			ls = append(ls, letters[i].Value)
 		}
 	}
 	return len(ls)
 }
 
-func (letter LetterStruct) print() {
-	fmt.Println("Letter: \t", letter.Letter)
+func (letter Letter) print() {
+	fmt.Println("Letter: \t", letter.Value)
 	fmt.Println("Version: \t", letter.Version)
 	fmt.Println("Rows: \t\t", letter.Rows)
 	fmt.Println("Columns: \t", letter.Columns)
 }
 
 // converts 1d int list of pixels to 2d float64
-func (letter LetterStruct) getPixels() [][]float64 {
+func (letter Letter) getPixels() [][]float64 {
 	newLetter := make([][]float64, letter.Rows)
 	pixel := 0 // keep track of pixels in letterstruct are 1d array of ints
 	for i := range newLetter {
