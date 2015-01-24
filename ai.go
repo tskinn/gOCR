@@ -14,11 +14,11 @@ import (
 type WeightMap [][][]float64
 
 type Letter struct {
-  Value string `json:"letter"`
-	Version string `json:"version"`
-	Rows    int    `json:"rows"`
-	Columns int    `json:"cols"`
-	Pixels  []int  `json:"pixels"`
+	Value   string  `json:"letter"`
+	Version string  `json:"version"`
+	Rows    int     `json:"rows"`
+	Columns int     `json:"cols"`
+	Pixels  [][]int `json:"pixels"`
 }
 
 func (weights *WeightMap) init(letters, rows, cols int) {
@@ -50,9 +50,28 @@ func (weights *WeightMap) getWinner(letter [][]float64) int {
 			winner = i
 		}
 	}
-	//fmt.Println(winner)
+	fmt.Println(winner)
 	return winner
 }
+
+func (weights *WeightMap) Update(rate float64, distance int, const letter [][]int) {
+	updateChecker := make([][]bool, len(letter))
+	for i := range letter {
+		updateChecker[i] = make([]bool, len(letter[i]))
+		for j := range letter[i] {
+			updateChecker[i][j] = bool(letter[i][j])
+		}
+	}
+	for i := 0; i < distance; i++ {
+		for x := 0; x < len(letter); x++ {
+			for y := 0; y < len(letter[x]); y++ {
+				if isNeighbor(i, updateChecker) {
+					updateChecker[x][y] = true
+				}
+			} // I dont know how to find the right neighbors
+		}   // maybe have a function that retures a list of tuples that are neighbors
+	}     // of a given dot and update them if they havent been already
+}       // or make a list all the neighbors first and update afterwards
 
 func (weights *WeightMap) print() {
 	for i := range *weights {
@@ -113,26 +132,24 @@ func (letter Letter) print() {
 	fmt.Println("Columns: \t", letter.Columns)
 }
 
-// converts 1d int list of pixels to 2d float64
+// converts int list of pixels to float64
 func (letter Letter) getPixels() [][]float64 {
 	newLetter := make([][]float64, letter.Rows)
-	pixel := 0 // keep track of pixels in letterstruct are 1d array of ints
 	for i := range newLetter {
 		newLetter[i] = make([]float64, letter.Columns)
 		for j := range newLetter[i] {
-			if letter.Pixels[pixel] == 1 { // convert to floats
+			if letter.Pixels[i][j] == 1 { // convert to floats
 				newLetter[i][j] = 1.0
 			} else {
 				newLetter[i][j] = 0.0 // probably not necesarry as is initd to 0.0
 			}
-			pixel++
 		}
 	}
 	return newLetter
 }
 
 func main() {
-	lettersJSON := getLettersJSON("newletters.json")
+	lettersJSON := getLettersJSON("fourletters.json")
 	weightMap := WeightMap{}
 	weightMap.init(getNumberOfLetters(lettersJSON), lettersJSON[0].Rows, lettersJSON[0].Columns)
 	for i := range lettersJSON {
