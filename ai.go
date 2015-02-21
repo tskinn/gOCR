@@ -54,7 +54,7 @@ func (weights *WeightMap) getWinner(letter [][]float64) int {
 	return winner
 }
 
-func (weights *WeightMap) Update(rate float64, distance int, letter [][]int) {
+func (weights *WeightMap) Update(rate float64, letter [][]int) {
 	updateChecker := make([][]int, len(letter))
 	for i := range letter {
 		updateChecker[i] = make([]int, len(letter[i]))
@@ -64,9 +64,10 @@ func (weights *WeightMap) Update(rate float64, distance int, letter [][]int) {
 	}
 	for x := 0; x < len(letter); x++ {
 		for y := 0; y < len(letter[x]); y++ {
-			//updateChecker[x][y] = distToNeigh(letter, x, y)
-			fmt.Println("Shortest distance: ", distToNeigh(letter, x, y))
+			updateChecker[x][y] = distToNeigh(letter, x, y) // create algorithm to update based on distance
+			//fmt.Print(distToNeigh(letter, x, y),",")
 		}
+		//fmt.Println()
 	}
 }
 
@@ -78,7 +79,7 @@ func distToNeigh(letter [][]int, x, y int) int {
 	for i := range letter {
 		for j := range letter[i] {
 			dist := 99999
-			if letter[i][j]  == 1{
+			if letter[i][j] == 1 {
 				dist = int(math.Sqrt(math.Pow(float64((i-x)), 2.0) + math.Pow(float64((j-y)), 2.0)))
 			}
 			if dist < shortestDist {
@@ -152,7 +153,7 @@ func (letter Letter) print() {
 }
 
 // converts int list of pixels to float64
-func (letter Letter) getPixels() [][]float64 {
+func (letter Letter) getPixelFloat() [][]float64 {
 	newLetter := make([][]float64, letter.Rows)
 	for i := range newLetter {
 		newLetter[i] = make([]float64, letter.Columns)
@@ -168,11 +169,12 @@ func (letter Letter) getPixels() [][]float64 {
 }
 
 func main() {
-	lettersJSON := getLettersJSON("fourletters.json")
+	lettersJSON := getLettersJSON("newletters.json")
 	weightMap := WeightMap{}
 	weightMap.init(getNumberOfLetters(lettersJSON), lettersJSON[0].Rows, lettersJSON[0].Columns)
 	for i := range lettersJSON {
-		weightMap.getWinner(lettersJSON[i].getPixels())
+		weightMap.getWinner(lettersJSON[i].getPixelFloat())
 	}
-	weightMap.Update(1.0, 10, lettersJSON[0].Pixels)
+	weightMap.Update(1.0, lettersJSON[31].Pixels)
+	weightMap.print()
 }
