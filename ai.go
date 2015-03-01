@@ -11,7 +11,16 @@ import (
 	"strings"
 )
 
-type WeightMap [][][]float64
+//type WeightMap [][][]float64
+
+type WeightMap struct {
+	Map [][][]float64   `json:"weightmap"`
+	Winners []string  `json:"winners"`
+	NumberOfLetters int       `json:"numLetters"`
+	LearningRate float64 `json:"learningRate"`
+	TotalIterations int `json:"totalIterations"`
+	CurrentIteration int `json:"currentIteration"`
+}
 
 type Letter struct {
 	Value   string  `json:"letter"`
@@ -21,28 +30,31 @@ type Letter struct {
 	Pixels  [][]int `json:"pixels"`
 }
 
+// Initialize WeightMap struct
 func (weights *WeightMap) init(letters, rows, cols int) {
+	weights.NumberOfLetters = letters    
 	r := rand.New(rand.NewSource(999))
-	*weights = make([][][]float64, letters)
+	weights.Map = make([][][]float64, letters)
 	for i := 0; i < letters; i++ {
-		(*weights)[i] = make([][]float64, rows)
+		(weights.Map)[i] = make([][]float64, rows)
 		for j := 0; j < rows; j++ {
-			(*weights)[i][j] = make([]float64, cols)
+			(weights.Map)[i][j] = make([]float64, cols)
 			for k := 0; k < cols; k++ {
-				(*weights)[i][j][k] = r.Float64()
+				(weights.Map)[i][j][k] = r.Float64()
 			}
 		}
 	}
 }
 
+// Calculate which output node is closest match to input
 func (weights *WeightMap) getWinner(letter [][]float64) int {
 	winner := 0
 	top := 99999.9
-	for i := range *weights { //i := 0; i < NUMLETTERS; i++ {
+	for i := range weights.Map { //i := 0; i < NUMLETTERS; i++ {
 		distance := 0.0
-		for j := range (*weights)[i] { //0; j < NUMPIXELS; j++ {
-			for k := range (*weights)[i][j] {
-				distance += (letter[j][k] - (*weights)[i][j][k]) * (letter[j][k] - (*weights)[i][j][k])
+		for j := range (weights.Map)[i] { //0; j < NUMPIXELS; j++ {
+			for k := range (weights.Map)[i][j] {
+				distance += (letter[j][k] - (weights.Map)[i][j][k]) * (letter[j][k] - (weights.Map)[i][j][k])
 			}
 		}
 		if math.Sqrt(distance) < top {
@@ -54,23 +66,68 @@ func (weights *WeightMap) getWinner(letter [][]float64) int {
 	return winner
 }
 
-func (weights *WeightMap) Update(rate float64, letter [][]int) {
-	updateChecker := make([][]int, len(letter))
-	for i := range letter {
-		updateChecker[i] = make([]int, len(letter[i]))
-		for j := range letter[i] {
-			updateChecker[i][j] = int(letter[i][j])
-		}
+// get updated individual weight
+func getUpdWeight(distance, dRange, lWeight int, rate, wWeight float64) float64 {
+	// Most pixels will be within half of the lattice length of active pixel
+	longestDist := dRange / 2
+	
+	// some cases there will be pixels more than half the lattice away from active pixel
+	if distance >= longestDist {
+		distance = longestDist
 	}
-	for x := 0; x < len(letter); x++ {
-		for y := 0; y < len(letter[x]); y++ {
-			updateChecker[x][y] = distToNeigh(letter, x, y) // create algorithm to update based on distance
-			//fmt.Print(distToNeigh(letter, x, y),",")
+
+	// math.Acose(0.0) ====== 1.5707963267948966
+	distanceAdjustment := math.Cos(float64(distance) / ((1.5) / math.Acos(0.0)))
+	// distanceAdjustment := math.Cos(float64(distance) / ((float64(longestDist) / 2.0) / math.Acos(0.0)))
+
+	if distance >= 3 {
+		distanceAdjustment = -1.0
+	}
+	// difference from 0.0 to weight is just the weight
+	difference := wWeight
+	
+	// if distAdjust is negative (adjusting towards zero) or difference is between weight and 1.0
+	if distanceAdjustment > 0 {
+		difference = 1.0 - wWeight
+	}
+	
+	// if wWeight + rate * difference * distanceAdjustment > 1 {
+	// 	fmt.Println("distance:       ", distance)
+	// 	fmt.Println("dRange:         ", dRange)
+	// 	fmt.Println("rate:           ", rate)
+	// 	fmt.Println("wWeight:        ", wWeight)
+	// 	fmt.Println("difference:     ", difference)
+	// 	fmt.Println("distanceAdjust: ", distanceAdjustment)
+	// 	fmt.Println("added:       ", rate * difference * distanceAdjustment)
+	// 	fmt.Println("newWeight:      ", wWeight + rate * difference * distanceAdjustment)
+	// 	fmt.Println()
+	// }
+	
+	return wWeight + (rate * difference * distanceAdjustment)
+}
+
+// Update the weightmap according to the winner of training iteration and learning rate
+func (weights *WeightMap) UpdateWinner(letter [][]int, winner int) {
+
+	// (only created to shorten lines and not really necesary)
+	curIt := float64(weights.CurrentIteration)
+	totIt := float64(weights.TotalIterations)
+
+	// as iterations go by, lessen the rate of change in the updating of the weights
+	curRate := weights.LearningRate * math.Exp(-(curIt) / totIt)
+
+	for i := range letter {
+		for j := range letter[i] {
+			distance := distToNeigh(letter, i, j)
+			weight := weights.Map[winner][i][j]
+			lWeight := letter[i][j]
+			weights.Map[winner][i][j] = getUpdWeight(distance, len(letter), lWeight, curRate, weight)
 		}
-		//fmt.Println()
 	}
 }
 
+// Finds the distance to closest black pixel in letter
+// helper function to update weightmap training iteration winner
 func distToNeigh(letter [][]int, x, y int) int {
 	shortestDist := 999999
 	if letter[x][y] == 1 {
@@ -93,14 +150,20 @@ func distToNeigh(letter [][]int, x, y int) int {
 	return shortestDist
 }
 
+// Print the weightmap
 func (weights *WeightMap) print() {
-	for i := range *weights {
-		for j := range (*weights)[i] {
-			fmt.Println((*weights)[i][j])
+	for i := range weights.Map {
+		for j := range (weights.Map)[i] {
+			for k := range weights.Map[i][j] {
+				fmt.Print(int(weights.Map[i][j][k] * 10))
+			}
+			fmt.Println()
 		}
+		fmt.Println()
 	}
 }
 
+// Get all the letters to be used for training from json file
 func getLettersJSON(filename string) []Letter {
 	// Open file containing letters
 	file, er := ioutil.ReadFile(filename)
@@ -121,12 +184,14 @@ func getLettersJSON(filename string) []Letter {
 	return allLetters
 }
 
+// Print letters??
 func print(letters []Letter) {
 	for _, letter := range letters {
 		letter.print()
 	}
 }
 
+// Calculate number of distinct letters
 func getNumberOfLetters(letters []Letter) int {
 	ls := make([]string, 0)
 	var isIn bool
@@ -145,6 +210,7 @@ func getNumberOfLetters(letters []Letter) int {
 	return len(ls)
 }
 
+// Print letter struct
 func (letter Letter) print() {
 	fmt.Println("Letter: \t", letter.Value)
 	fmt.Println("Version: \t", letter.Version)
@@ -153,7 +219,7 @@ func (letter Letter) print() {
 }
 
 // converts int list of pixels to float64
-func (letter Letter) getPixelFloat() [][]float64 {
+func (letter Letter) convertToFloat() [][]float64 {
 	newLetter := make([][]float64, letter.Rows)
 	for i := range newLetter {
 		newLetter[i] = make([]float64, letter.Columns)
@@ -169,12 +235,27 @@ func (letter Letter) getPixelFloat() [][]float64 {
 }
 
 func main() {
-	lettersJSON := getLettersJSON("newletters.json")
+	lettersJSON := getLettersJSON("singleletterset.json")
 	weightMap := WeightMap{}
+	weightMap.TotalIterations = 100
+	weightMap.CurrentIteration = 0
+	weightMap.LearningRate = 0.1
 	weightMap.init(getNumberOfLetters(lettersJSON), lettersJSON[0].Rows, lettersJSON[0].Columns)
-	for i := range lettersJSON {
-		weightMap.getWinner(lettersJSON[i].getPixelFloat())
+	for j := 0; j < weightMap.TotalIterations; j++ {
+		for i := range lettersJSON {
+			winner := weightMap.getWinner(lettersJSON[i+4 % 4].convertToFloat())
+			weightMap.UpdateWinner(lettersJSON[winner].Pixels, winner)
+		}
+		weightMap.CurrentIteration++
 	}
-	weightMap.Update(1.0, lettersJSON[31].Pixels)
 	weightMap.print()
+
+	//difference := math.Abs(float64(lWeight) - wWeight)
+	//distanceAdjustment := math.Cos(float64(distance) / (float64(longestDist) / math.Acos(0.0)))
+	
+	// distance dRange lWeight, rate, wWeight
+	// we := 0.38124651
+	// fmt.Println("Before: ", we)
+	// fmt.Println("After:  ", getUpdWeight(0, 9, 0, 0.2, we))
+	fmt.Println(math.Acos(0.0))
 }

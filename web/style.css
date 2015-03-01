@@ -1,0 +1,24 @@
+.letter div div {
+  height : 4px;
+  width : 4px;
+  background-color: red;
+  margin : 1px 1px;
+}
+
+
+.letter div div {
+  float : left;
+}
+
+.letter {
+  float : left;
+  margin : 5px;
+  width: 55px;
+}
+
+
+.letter_container {
+   background-color: yellow;
+   width: 600px;
+   min-height : 300px;
+}
