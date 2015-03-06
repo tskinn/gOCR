@@ -1,24 +1,171 @@
-.letter div div {
-  height : 4px;
-  width : 4px;
-  background-color: red;
-  margin : 1px 1px;
+
+.main {
+    min-width: 935px;
+    min-height: 200px;
+    background-color: tan;
+    padding: 10px;
+}
+
+.content {
+    //background-color: black;
+    margin: 10px auto;
+    padding: 10px;
+    width: 950px;
+    //height: 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+.neuralnet_title {
+    flex: 9;
+    background-color: brown;
+    height: 30px;
+    text-align: center;
+}
+
+.neuralnet_container {
+    background-color: pink;
+    //width: 910px;
+    //height: 180px;
+    //margin: 10px auto;
+    flex: 1;
+}
+
+.output_node {
+    float: left;
+    width: 63px;
+    height: 80px;
+    margin: 5 5 5 5;
+    display: flex;
+    flex-direction: column;
+}
+
+.weights {
+    flex: 15;
+    background-color: red;
+}
+
+.letterguess {
+    flex: 4;
+    background-color: green;
+}
+
+.second_title {
+    flex: 9;
+    height: 30px;
+    background-color: brown;
+    display: flex;
+    text-align: center;
+}
+
+.sub_title_left {
+    flex: 15;
+    background-color: purple;
+    margin: 5 5;
+}
+
+.sub_title_right {
+    flex: 11;
+    background-color: orange;
+    margin: 5 5;
+}
+
+.secondlevel {
+    flex: 1;    
+    height: 200px;
+    width: 100%;
+    background-color: pink;
+    flex-direction: row;
+    display: flex;
+}
+
+.customchar {
+    margin: 5 5;
+    flex: 2;
+    background-color: green;
+}
+.customchar_buttons {
+    margin: 5 5;
+    flex: 2;
+    background-color: blue;
+}
+
+.config {
+    margin: 5 5;
+    flex: 3;
+    background-color: yellow;
+}
+
+.testchars_title {
+    flex: 9;
+    height: 30px;
+    background-color: brown;
+    text-align: center;
+}
+
+.testchars_container {
+    background-color: pink;
+    flex: 1;
+}
+
+.testchars {
+}
+
+.char_node {
+    float: left;
+    width: 63px;
+    height: 80px;
+    margin: 5 5 5 5;
+    display: flex;
+    flex-direction: column;
+}
+
+.char {
+    flex: 15;
+    background-color: green;
+}
+
+.charname {
+    flex: 4;
+    background-color: red;
+}
+
+.char_node:hover {
+                        background-color: yellow;
+                    }
+.char:hover {
+                 background-color: yellow;
+             }
+
+.customc {
+    margin: 0 auto;
+    width: 190px;
+}
+
+.weights div div {
+    height: 5px;
+    width: 5px;
+    background-color: blue;
+    margin: 1px 1px;
+    float: left;
 }
 
 
-.letter div div {
-  float : left;
+.customc div div {
+    height: 19px;
+    width: 19px;
+    //background-color: blue;
+    margin: 1 1;
+    float: left;
 }
 
-.letter {
-  float : left;
-  margin : 5px;
-  width: 55px;
+.char div div {
+    height: 5px;
+    width: 5px;
+    background-color: blue;
+    margin: 1px 1px;
+    float: left;
 }
 
 
-.letter_container {
-   background-color: yellow;
-   width: 600px;
-   min-height : 300px;
-}
+
