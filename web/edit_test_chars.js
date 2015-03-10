@@ -65,17 +65,19 @@ var miniLetterCallback = function (event) {
 
 //   Adds events to pixels to enable color changing 
 function addColorChanging() {
-    var rows = document.querySelectorAll(".c_pix");
-    for (var i = 0; i < rows.length; i++) {
-        //rows[i].style.backgroundColor = "#9B4C00";
-        rows[i].addEventListener("click", function(event) {
+    var pixels = document.querySelectorAll(".c_pix");
+    for (var i = 0; i < pixels.length; i++) {
+        pixels[i].style.backgroundColor = "#193441";
+        pixels[i].addEventListener("click", function(event) {
             //console.log(event);
             stuff = event.toElement;
-	    console.log(stuff.style.backgroundColor);
-            if (stuff.style.backgroundColor == "#91AA9D") {
-                stuff.style.backgroundColor = "#193441";   // this code should be good
+	    console.log(stuff);
+	    //          Needs to be in rgb to compare in javascript
+            if (stuff.style.backgroundColor == "rgb(145, 170, 157)") { // #91AA9D
+		console.log("hello");
+                stuff.style.backgroundColor = "rgb(25, 52, 65)";  //#193441
             } else {
-                stuff.style.backgroundColor = "#91AA9D";
+                stuff.style.backgroundColor = "rgb(145, 170, 157)";
             }
             copyLetter(stuff.parentNode.parentNode, selectedLetter);
         });
@@ -86,15 +88,15 @@ function addColorChanging() {
 //   Used to copy small letter to big letter
 //     and big to small
 function copyLetter(fromLetter, toLetter) {
-    console.log(fromLetter);
-    console.log(toLetter);
+    ;;console.log(fromLetter);
+    //console.log(toLetter);
     var fromRows = fromLetter.childNodes;
     var toRows = toLetter.childNodes;
     //console.log(toRows[1]);
     for (var i = 0; i < fromRows.length; i++) {
         var fromPixels = fromRows[i].childNodes;
         var toPixels = toRows[i].childNodes;
-        console.log(fromPixels);
+        //console.log(fromPixels);
         for (var j = 0; j < fromPixels.length; j++) {
             toPixels[j].style.backgroundColor = fromPixels[j].style.backgroundColor;
             console.log(toPixels[j].style.backgroundColor + " to " +  fromPixels[j].style.backgroundColor);
