@@ -2,12 +2,12 @@
 .main {
     min-width: 935px;
     min-height: 200px;
-    background-color: tan;
+    background-color: #3E606F;
     padding: 10px;
 }
 
 .content {
-    //background-color: black;
+    background-color: #D1DBBD;
     margin: 10px auto;
     padding: 10px;
     width: 950px;
@@ -18,15 +18,18 @@
 
 .neuralnet_title {
     flex: 9;
-    background-color: brown;
+    background-color: #3E606F;
     height: 30px;
     text-align: center;
+    color: #D1DBBD;
 }
 
 .neuralnet_container {
-    background-color: pink;
+    background-color: #D1DBBD;
     //width: 910px;
     //height: 180px;
+
+
     //margin: 10px auto;
     flex: 1;
 }
@@ -42,31 +45,37 @@
 
 .weights {
     flex: 15;
-    background-color: red;
+    background-color: #D1DBBD;
 }
 
 .letterguess {
     flex: 4;
-    background-color: green;
+    background-color: #91AA9D;
 }
 
 .second_title {
     flex: 9;
     height: 30px;
-    background-color: brown;
+    //background-color: ;
     display: flex;
     text-align: center;
 }
 
 .sub_title_left {
     flex: 15;
-    background-color: purple;
+    background-color: #91AA9D;
     margin: 5 5;
+}
+
+.title {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #3E606F;
 }
 
 .sub_title_right {
     flex: 11;
-    background-color: orange;
+    background-color: #91AA9D;
     margin: 5 5;
 }
 
@@ -74,7 +83,7 @@
     flex: 1;    
     height: 200px;
     width: 100%;
-    background-color: pink;
+    background-color: #3E606F;
     flex-direction: row;
     display: flex;
 }
@@ -82,29 +91,29 @@
 .customchar {
     margin: 5 5;
     flex: 2;
-    background-color: green;
+    background-color: #D1DBBD;
 }
 .customchar_buttons {
     margin: 5 5;
     flex: 2;
-    background-color: blue;
+    background-color: #D1DBBD;
 }
 
 .config {
     margin: 5 5;
     flex: 3;
-    background-color: yellow;
+    background-color: #D1DBBD;
 }
 
 .testchars_title {
     flex: 9;
     height: 30px;
-    background-color: brown;
+    background-color: #91AA9D;
     text-align: center;
 }
 
 .testchars_container {
-    background-color: pink;
+    background-color: #D1DBBD;
     flex: 1;
 }
 
@@ -122,19 +131,19 @@
 
 .char {
     flex: 15;
-    background-color: green;
+    //background-color: #D1DBBD;
 }
 
 .charname {
     flex: 4;
-    background-color: red;
+    background-color: #FCFFF5;
 }
 
-.char_node:hover {
-                        background-color: yellow;
-                    }
+/* .char_node:hover { */
+/*                         background-color: black; */
+/*                     } */
 .char:hover {
-                 background-color: yellow;
+                 background-color: #3E606F;
              }
 
 .customc {
@@ -145,7 +154,7 @@
 .weights div div {
     height: 5px;
     width: 5px;
-    background-color: blue;
+    //background-color: blue;
     margin: 1px 1px;
     float: left;
 }
@@ -162,7 +171,7 @@
 .char div div {
     height: 5px;
     width: 5px;
-    background-color: blue;
+    //background-color: blue;
     margin: 1px 1px;
     float: left;
 }

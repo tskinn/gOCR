@@ -11,7 +11,7 @@ function initPixels(color, className) {
 }
 
 // Add event listeners to pixels
-function addEventListeners(classname, miniLetterCallback, pixelColor) {
+function addEventListeners(classname, miniLetterCallback) {
     var divs = document.querySelectorAll("." + classname);
     for (var i = 0; i < divs.length; i++) {
         divs[i].addEventListener("click", miniLetterCallback);
@@ -31,9 +31,9 @@ var miniLetterCallback = function (event) {
         return; // nothing to do
     } else {
         if (selectedLetter) {
-            oldSelLet.style.backgroundColor = 'green';
+            oldSelLet.style.backgroundColor = '#D1DBBD';
         }      
-        newSelLet.style.backgroundColor = 'yellow';
+        newSelLet.style.backgroundColor = '#91AA9D';
         //loadToBigChar(newSelLet);
 	//copyLetter()
         copyLetter(newSelLet, document.querySelectorAll(".customc")[0]); // copy little letter to big
@@ -54,8 +54,8 @@ var miniLetterCallback = function (event) {
 //         //console.log("pixels: " + pixels);
 //         var bigPixels = bigRows.querySelectorAll(".c_pix");
 //         for (var j = 0; j < pixels.length; j++) {
-//             if (pixels[j].style.backgroundColor == "blue") {
-//                 bigPixels[j].style.backgroundColor = "blue";
+//             if (pixels[j].style.backgroundColor == "#9B4C00") {
+//                 bigPixels[j].style.backgroundColor = "#9B4C00";
 //             } else {
 //                 bigPixels[j].style.backgroundColor = "black";
 //             }
@@ -67,14 +67,15 @@ var miniLetterCallback = function (event) {
 function addColorChanging() {
     var rows = document.querySelectorAll(".c_pix");
     for (var i = 0; i < rows.length; i++) {
-        //rows[i].style.backgroundColor = "blue";
+        //rows[i].style.backgroundColor = "#9B4C00";
         rows[i].addEventListener("click", function(event) {
-            console.log(event);
+            //console.log(event);
             stuff = event.toElement;
-            if (stuff.style.backgroundColor == "blue") {
-                stuff.style.backgroundColor = "black";
+	    console.log(stuff.style.backgroundColor);
+            if (stuff.style.backgroundColor == "#91AA9D") {
+                stuff.style.backgroundColor = "#193441";   // this code should be good
             } else {
-                stuff.style.backgroundColor = "blue";
+                stuff.style.backgroundColor = "#91AA9D";
             }
             copyLetter(stuff.parentNode.parentNode, selectedLetter);
         });
@@ -102,10 +103,10 @@ function copyLetter(fromLetter, toLetter) {
 }
 
 
-initPixels("blue", "c_pix");
-initPixels("blue", "char_pix");
-var miniLetters = document.querySelectorAll(".char");
-console.log(miniLetters);
+initPixels("#193441", "c_pix");
+initPixels("#193441", "char_pix");
+//var miniLetters = document.querySelectorAll(".char");
+//console.log(miniLetters);
 var selectedLetter = false;
-addEventListeners("char", miniLetterCallback, "blue");
+addEventListeners("char", miniLetterCallback);
 addColorChanging();
