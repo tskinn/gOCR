@@ -136,12 +136,9 @@
 
 .charname {
     flex: 4;
-    background-color: #FCFFF5;
+    background-color: #91AA9D;
 }
 
-/* .char_node:hover { */
-/*                         background-color: black; */
-/*                     } */
 .char:hover {
                  background-color: #3E606F;
              }

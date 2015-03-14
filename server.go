@@ -19,6 +19,20 @@ var (
 	//homeTempl = template.Must(template.ParseFiles("console.html"))
 )
 
+
+// type WeightMap struct {
+// 	Message string `json:"message"`
+// 	Map [][][]float64   `json:"weightmap"`
+// 	Winners []string  `json:"winners"`
+// 	Letters [][][]int `json:"letters"`
+// 	NumberOfLetters int       `json:"numLetters"`
+// 	LearningRate float64 `json:"learningRate"`
+// 	TotalIterations int `json:"totalIterations"`
+// 	CurrentIteration int `json:"currentIteration"`
+// }
+
+
+
 type WeightMap [][][]float64
 
 func (weights *WeightMap) init(letters, rows, cols int) {
@@ -34,21 +48,6 @@ func (weights *WeightMap) init(letters, rows, cols int) {
 		}
 	}
 }
-
-/*
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(w, "Not found", 404)
-		return
-	}
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", 405)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	homeTempl.Execute(w, r.Host)
-}
-*/
 
 func serveWS(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
@@ -68,10 +67,27 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	lettersJSON := getLettersJSON("singleletterset.json")
 	
-	conn.WriteJSON(weights)
-	// w.Header().Set("Content-Type", "application/json")
-	// w.Write(js)
+	
+	message := Message{}
+	message.Message = "update"
+	message.loadLetters(lettersJSON)
+	message.init(26, 9, 9)
+	conn.WriteJSON(message)
+	//defer conn.Close()
+	//w.Header().Set("Content-Type", "application/json")
+	//w.Write(js)
+
+	// for {
+	// 	messageType, p, err := conn.ReadMessage()
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// 	switch 
+		
+	// }
 }
 
 func main() {

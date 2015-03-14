@@ -12,11 +12,37 @@ function changeColor (letter, row, col, color) {
     pixel.style.backgroundColor = color;
 }
 
+function changeColorLetter (letter, row, col, color) {
+    var letters = document.querySelectorAll(".char")[letter];
+    var rows = letters.querySelectorAll(".char_row")[row];
+    var pixel = rows.querySelectorAll(".char_pix")[col];
+    pixel.style.backgroundColor = color;
+}
+
+
 // given a double value convert to color value
 function weightToColorValue(value) {
     //value = value + 0.5;
     value = value * 10;
     return colorSpectrum[(value | 0)]; // or parseInt(value, 10)
+}
+
+function updateLetterColor(value) {
+    if (value == 1) {
+        return "rgb(25, 52, 65)"
+    } else {
+        return "rgb(145, 170, 157)";
+    }
+}
+
+function updateLetters(letters) {
+    for (letter = 0; letter < letters.length; letter++) {
+        for (row = 0; row < letters[letter].length; row++) {
+            for (col = 0; col < letters[letter][row].length; col++) {
+                changeColorLetter(letter, row, col, updateLetterColor(letters[letter][row][col]))
+            }
+        }
+    }
 }
 
 function  updateWeightMapColor (weights) {
@@ -36,6 +62,14 @@ socket.onopen = function (event) {
 };
 
 socket.onmessage = function (event) {
-    updateWeightMapColor(JSON.parse(event.data));
-    console.log(event.data);
+    message = JSON.parse(event.data);
+    console.log(message);
+    if (message.message == "update") {
+        console.log("update");
+    } else if (message.message == "done") {
+        ;
+    }
+    updateWeightMapColor(message.neuralNet);
+    updateLetters(message.letters);
+    //console.log(event.data);
 };

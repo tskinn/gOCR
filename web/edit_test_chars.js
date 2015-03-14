@@ -17,7 +17,6 @@ function addEventListeners(classname, miniLetterCallback) {
         divs[i].addEventListener("click", miniLetterCallback);
     }
 }
-
 // load small character to big character
 var miniLetterCallback = function (event) {
     var newSelLet = event.toElement; // get Node that is getting clicked
@@ -33,7 +32,7 @@ var miniLetterCallback = function (event) {
         if (selectedLetter) {
             oldSelLet.style.backgroundColor = '#D1DBBD';
         }      
-        newSelLet.style.backgroundColor = '#91AA9D';
+        newSelLet.style.backgroundColor = '#FCFFF5';
         //loadToBigChar(newSelLet);
 	//copyLetter()
         copyLetter(newSelLet, document.querySelectorAll(".customc")[0]); // copy little letter to big
@@ -41,43 +40,21 @@ var miniLetterCallback = function (event) {
     }
 }
 
-// function loadToBigChar(miniLetter) {
-//     //var littleRows = miniLetter.querySelectorAll(".char_row");
-
-//     //console.log(miniLetter.querySelectorAll(".c_pix"));
-//     var littleRows = miniLetter;//.childNodes;
-//     console.log("mini:" + miniLetter);
-//     var bigRows = document.querySelectorAll(".c_row");
-//     //console.log(miniLetter);
-//     for (var i = 0; i < littleRows.length; i++) {
-//         var pixels = littleRows.querySelectorAll(".char_pix");
-//         //console.log("pixels: " + pixels);
-//         var bigPixels = bigRows.querySelectorAll(".c_pix");
-//         for (var j = 0; j < pixels.length; j++) {
-//             if (pixels[j].style.backgroundColor == "#9B4C00") {
-//                 bigPixels[j].style.backgroundColor = "#9B4C00";
-//             } else {
-//                 bigPixels[j].style.backgroundColor = "black";
-//             }
-//         }
-//     }
-// }
-
 //   Adds events to pixels to enable color changing 
 function addColorChanging() {
     var pixels = document.querySelectorAll(".c_pix");
     for (var i = 0; i < pixels.length; i++) {
-        pixels[i].style.backgroundColor = "#193441";
+        //pixels[i].style.backgroundColor = "#193441";
         pixels[i].addEventListener("click", function(event) {
             //console.log(event);
             stuff = event.toElement;
 	    console.log(stuff);
 	    //          Needs to be in rgb to compare in javascript
-            if (stuff.style.backgroundColor == "rgb(145, 170, 157)") { // #91AA9D
+            if (stuff.style.backgroundColor == "rgb(25, 52, 65)") { // #91AA9D
 		console.log("hello");
-                stuff.style.backgroundColor = "rgb(25, 52, 65)";  //#193441
+                stuff.style.backgroundColor = "rgb(145, 170, 157)";  //#193441
             } else {
-                stuff.style.backgroundColor = "rgb(145, 170, 157)";
+                stuff.style.backgroundColor = "rgb(25, 52, 65)";
             }
             copyLetter(stuff.parentNode.parentNode, selectedLetter);
         });
@@ -105,8 +82,8 @@ function copyLetter(fromLetter, toLetter) {
 }
 
 
-initPixels("#193441", "c_pix");
-initPixels("#193441", "char_pix");
+initPixels("rgb(145, 170, 157)", "c_pix");
+initPixels("rgb(145, 170, 157)", "char_pix");
 //var miniLetters = document.querySelectorAll(".char");
 //console.log(miniLetters);
 var selectedLetter = false;
