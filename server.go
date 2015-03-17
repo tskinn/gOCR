@@ -76,18 +76,34 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 	message.loadLetters(lettersJSON)
 	message.init(26, 9, 9)
 	conn.WriteJSON(message)
+	
 	//defer conn.Close()
 	//w.Header().Set("Content-Type", "application/json")
 	//w.Write(js)
 
-	// for {
-	// 	messageType, p, err := conn.ReadMessage()
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// 	switch 
-		
-	// }
+	for {
+		receiveMessage := &Message{}
+		err := conn.ReadJSON(receiveMessage)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("Message Received: " + receiveMessage.Message)
+		if receiveMessage.Message == "train" {
+			message.TotalIterations = receiveMessage.TotalIterations
+			message.UpdateInterval = receiveMessage.UpdateInterval
+			message.LearningRate = receiveMessage.LearningRate
+			message.train(lettersJSON)
+			conn.WriteJSON(message)
+			
+		}else if receiveMessage.Message == "continue" {
+			message.train(lettersJSON)
+			
+			conn.WriteJSON(message)
+		} 
+		//log.Println(receiveMessage.Message)
+		log.Println("Trained")
+	}
 }
 
 func main() {

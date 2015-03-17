@@ -97,12 +97,43 @@
     margin: 5 5;
     flex: 2;
     background-color: #D1DBBD;
+    display: flex;
+    flex-direction: column;
+}
+
+.customchar_buttons button {
+    flex: 1;
+}
+
+.customchar_buttons div {
+    flex: 2;
 }
 
 .config {
     margin: 5 5;
     flex: 3;
     background-color: #D1DBBD;
+    display: flex;
+    flex-direction: column;
+}
+
+.config div {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+}
+
+.config div p {
+    flex:4;
+}
+
+.config div input {
+    flex:6;
+}
+
+.config div div {
+    flex: 2;
 }
 
 .testchars_title {
@@ -173,5 +204,7 @@
     float: left;
 }
 
-
+.config {
+    
+}
 

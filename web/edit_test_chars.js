@@ -65,7 +65,7 @@ function addColorChanging() {
 //   Used to copy small letter to big letter
 //     and big to small
 function copyLetter(fromLetter, toLetter) {
-    ;;console.log(fromLetter);
+    //console.log(fromLetter);
     //console.log(toLetter);
     var fromRows = fromLetter.childNodes;
     var toRows = toLetter.childNodes;
@@ -81,6 +81,14 @@ function copyLetter(fromLetter, toLetter) {
     }
 }
 
+function updateRangeValue(value, id) {
+    //console.log(value);
+    //console.log(id);
+    var valueId = document.getElementById(id + "value");
+    //console.log(valueId);
+    valueId.innerHTML = value;
+    //document.getElementById("valueId").innerHTML = value;
+}
 
 initPixels("rgb(145, 170, 157)", "c_pix");
 initPixels("rgb(145, 170, 157)", "char_pix");

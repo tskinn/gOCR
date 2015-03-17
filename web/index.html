@@ -126,8 +126,41 @@
           <div class="customchar">
             <div class="customc"></div>
           </div>
-          <div class="customchar_buttons"></div>
-          <div class="config"></div>
+          <div class="customchar_buttons">
+            <button id="train" onclick="train()">Train</button>
+            <button id="continue" onclick="continueTraining()">Continue</button>
+            <button id="reset" onclick="reset()">Reset</button>
+            <button id="test" onclick="test()">Test</button>
+            <div id="results"></div>
+            
+          </div>
+          <div class="config">
+            <div>
+              <p>Number of Letters:</p>
+              <input type="range" id="numletters" value="90" min="1" max="26" oninput="updateRangeValue(value, id)">
+              <div id="numlettersvalue"></div>
+            </div>
+            <div>
+              <p>Learning Rate:</p>
+              <input type="range" id="learningrate" value="90" min="0.00001" max="1.0" step="0.001" oninput="updateRangeValue(value, id)">
+              <div id="learningratevalue"></div>
+            </div>
+            <div>
+              <p>Training Iterations:</p>
+              <input type="range" id="iterations" value="90" min="1" max="10000" oninput="updateRangeValue(value, id)">
+              <div id="iterationsvalue"></div>
+            </div>
+            <div>
+              <p>Number of Updates:</p>
+              <input type="range" id="updateinterval" value="1" min="1" max="100" oninput="updateRangeValue(value, id)">
+              <div id="updateintervalvalue"></div>
+            </div>
+            <div>
+              <p>Neighbor Effect:</p>
+              <input type="range" id="neighboreffect" value="90" min="0.001" max="2.5"  step="0.001" oninput="updateRangeValue(value, id)">
+              <div id="neighboreffectvalue"></div>
+            </div>
+          </div>
         </div>
 
 

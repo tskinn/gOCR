@@ -10,7 +10,7 @@ function changeColor (letter, row, col, color) {
     var rows = letters.querySelectorAll(".weight_row")[row];
     var pixel = rows.querySelectorAll(".weight_pixel")[col];
     pixel.style.backgroundColor = color;
-}
+}                                                                   //TODO combine these two functions
 
 function changeColorLetter (letter, row, col, color) {
     var letters = document.querySelectorAll(".char")[letter];
@@ -49,10 +49,50 @@ function  updateWeightMapColor (weights) {
     for (letter = 0; letter < weights.length; letter++) {
         for (row = 0; row < weights[letter].length; row++) {
             for (col = 0; col < weights[letter][row].length; col++) {
-                changeColor(letter, row, col, weightToColorValue(weights[letter][row][col]))
+                changeColor(letter, row, col, weightToColorValue(weights[letter][row][col]));
             }
         }
     }
+}
+
+var message = {
+    message: null,
+    isInitialized: null,
+    neuralNet: null,
+    letters: null,
+    winners: null,
+    numLetters: null,
+    learningRate: null,
+    totalIterations: null,
+    currentIteration: null,
+    updateInterval: null,
+    neighborEffect: null
+};
+
+function printMessage() {
+    console.log("Message:      " + message.message);
+    console.log("NumLetters:   " + message.numLetters);
+    console.log("LearningRate: " + message.learningRate);
+    console.log("TotalIters:   " + message.totalIterations);
+    console.log("UpdateInter:  " + message.updateInterval);
+    console.log("NeighborEfct: " + message.neighborEffect);
+}
+
+function train() {
+    message.message = "train";
+    message.numLetters = parseInt(document.getElementById("numletters").value);
+    message.learningRate = parseFloat(document.getElementById("learningrate").value);
+    message.totalIterations = parseFloat(document.getElementById("iterations").value);
+    message.updateInterval = parseInt(document.getElementById("updateinterval").value);
+    //message.updateInterval = parseFloat(document.getElementById("iterations").value);
+    message.neighborEffect = parseFloat(document.getElementById("neighboreffect").value);
+    socket.send(JSON.stringify(message));
+    //printMessage();
+}
+
+function continueTraining() {
+    message.message = "continue";
+    socket.send(JSON.stringify(message));
 }
 
 var socket = new WebSocket("ws://localhost:3000/ws");
@@ -63,13 +103,14 @@ socket.onopen = function (event) {
 
 socket.onmessage = function (event) {
     message = JSON.parse(event.data);
-    console.log(message);
+    //console.log(message);
     if (message.message == "update") {
         console.log("update");
+        updateWeightMapColor(message.neuralNet);
     } else if (message.message == "done") {
         ;
     }
-    updateWeightMapColor(message.neuralNet);
+    
     updateLetters(message.letters);
     //console.log(event.data);
 };

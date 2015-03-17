@@ -138,10 +138,11 @@ func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight float64) floa
 	}
 
 	// math.Acose(0.0) ====== 1.5707963267948966
-	distanceAdjustment := math.Cos(float64(distance) / ((1.5) / math.Acos(0.0)))
+	//distanceAdjustment := math.Cos(float64(distance) / ((1.5) / math.Acos(0.0)))
 	// distanceAdjustment := math.Cos(float64(distance) / ((float64(longestDist) / 2.0) / math.Acos(0.0)))
-
-	if distance >= 3 {
+	distanceAdjustment := math.Cos(float64(distance) / ((1.25) / math.Acos(0.0)))
+	
+	if distance >= 2 { // was 3
 		distanceAdjustment = -1.0
 	}
 	// difference from 0.0 to weight is just the weight
@@ -151,8 +152,10 @@ func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight float64) floa
 	if distanceAdjustment > 0 {
 		difference = 1.0 - wWeight
 	}
-	
-	return wWeight + (rate * difference * distanceAdjustment)
+	result := float64(wWeight + (rate * difference * distanceAdjustment))
+	//log.Printf("Distance Adjustment:  %f\tDifference:  %f\tRate:  %f\tWeight: %f\tResult: %f", distanceAdjustment, difference, rate, result)
+	log.Printf("Weight: %f + Adjustment: %f", wWeight, (rate * difference * distanceAdjustment))
+	return result
 }
 
 // Update the weightmap according to the winner of training iteration and learning rate
@@ -163,7 +166,8 @@ func (message *Message) UpdateWinner(letter [][]int, winner int) {
 	totIt := float64(message.TotalIterations)
 
 	// as iterations go by, lessen the rate of change in the updating of the weights
-	curRate := message.LearningRate * math.Exp(-(curIt) / totIt)
+	curRate := message.LearningRate *  math.Exp(-(curIt) * 2 / totIt)
+	//curRate := message.LearningRate * math.Exp(-(curIt) / totIt)
 
 	for i := range letter {
 		for j := range letter[i] {
@@ -207,6 +211,7 @@ func (message *Message) train(lettersJSON []Letter) {
 	if itersToStop > message.TotalIterations {
 		itersToStop = message.TotalIterations
 	}
+	log.Printf("Training from iterations %d to %d", message.CurrentIteration, itersToStop)
 	for i := message.CurrentIteration; i <= itersToStop; i++ { // why less than or equal to?
 		for j:= range message.Letters {
 			winner := message.getWinner(lettersJSON[j].getPixelsAsFloat())
