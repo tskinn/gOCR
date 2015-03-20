@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	//"text/template"
+	"time"
 )
 
 
@@ -72,9 +73,9 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 	
 	
 	message := Message{}
-	message.Message = "update"
+	message.Message = "init"
 	message.loadLetters(lettersJSON)
-	message.init(26, 9, 9)
+	message.init(26, 9, 9, time.Now().UTC().UnixNano())
 	conn.WriteJSON(message)
 	
 	//defer conn.Close()
@@ -89,20 +90,31 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Println("Message Received: " + receiveMessage.Message)
-		if receiveMessage.Message == "train" {
+		if receiveMessage.Message == "start" {
 			message.TotalIterations = receiveMessage.TotalIterations
 			message.UpdateInterval = receiveMessage.UpdateInterval
 			message.LearningRate = receiveMessage.LearningRate
+			message.Message = "update"
 			message.train(lettersJSON)
-			conn.WriteJSON(message)
+			//conn.WriteJSON(message)
 			
-		}else if receiveMessage.Message == "continue" {
+			log.Println("Trained")
+		} else if receiveMessage.Message == "continue" {
+			message.UpdateInterval = receiveMessage.UpdateInterval
+			message.Message = "update"
 			message.train(lettersJSON)
-			
-			conn.WriteJSON(message)
-		} 
+
+			//conn.WriteJSON(message)
+		} else if receiveMessage.Message == "reset" {
+			message = Message{}
+			message.Message = "init"
+			message.loadLetters(lettersJSON)
+			message.init(26, 9, 9, time.Now().UTC().UnixNano())		
+		}
 		//log.Println(receiveMessage.Message)
-		log.Println("Trained")
+		
+		
+		conn.WriteJSON(message)
 	}
 }
 

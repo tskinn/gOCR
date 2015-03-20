@@ -48,10 +48,10 @@ function addColorChanging() {
         pixels[i].addEventListener("click", function(event) {
             //console.log(event);
             stuff = event.toElement;
-	    console.log(stuff);
-	    //          Needs to be in rgb to compare in javascript
+	         //console.log(stuff);
+	         //          Needs to be in rgb to compare in javascript
             if (stuff.style.backgroundColor == "rgb(25, 52, 65)") { // #91AA9D
-		console.log("hello");
+		          console.log("hello");
                 stuff.style.backgroundColor = "rgb(145, 170, 157)";  //#193441
             } else {
                 stuff.style.backgroundColor = "rgb(25, 52, 65)";

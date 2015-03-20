@@ -81,7 +81,7 @@
 
 .secondlevel {
     flex: 1;    
-    height: 200px;
+    height: 220px;
     width: 100%;
     background-color: #3E606F;
     flex-direction: row;
@@ -92,6 +92,8 @@
     margin: 5 5;
     flex: 2;
     background-color: #D1DBBD;
+    display: flex;
+    flex-direction: column;
 }
 .customchar_buttons {
     margin: 5 5;
@@ -168,6 +170,7 @@
 .charname {
     flex: 4;
     background-color: #91AA9D;
+    text-align: center;
 }
 
 .char:hover {
@@ -177,6 +180,13 @@
 .customc {
     margin: 0 auto;
     width: 190px;
+    flex: 12;
+}
+
+.text {
+    flex: 1;
+    text-align: center;
+    margin: auto;
 }
 
 .weights div div {

@@ -2,6 +2,8 @@
 var letters = document.querySelectorAll(".weights");
 var colorSpectrum = ["#0515DC", "#1A45BF", "#378399", "#4BAD7E", "#5BCF6A", "#81A050", "#958643", "#BF5028", "#E91A0D", "#FB0301"];
 
+var pixelColors = ["rgb(145, 170, 157)", "rgb(25, 52, 65)"];
+
 console.log(letters.length);
 
 
@@ -28,20 +30,24 @@ function weightToColorValue(value) {
 }
 
 function updateLetterColor(value) {
-    if (value == 1) {
-        return "rgb(25, 52, 65)"
-    } else {
-        return "rgb(145, 170, 157)";
-    }
+    return pixelColors[value];
+    // if (value == 1) {
+    //     return "rgb(25, 52, 65)"
+    // } else {
+    //     return "rgb(145, 170, 157)";
+    // }
 }
 
-function updateLetters(letters) {
+function updateLetters(letters, winners) {
+    var charnames = document.querySelectorAll(".charname");
     for (letter = 0; letter < letters.length; letter++) {
         for (row = 0; row < letters[letter].length; row++) {
             for (col = 0; col < letters[letter][row].length; col++) {
                 changeColorLetter(letter, row, col, updateLetterColor(letters[letter][row][col]))
             }
         }
+        
+        charnames.item(letter).innerHTML = winners[letter].toUpperCase();
     }
 }
 
@@ -53,6 +59,10 @@ function  updateWeightMapColor (weights) {
             }
         }
     }
+}
+
+function getLetters () {
+    ;
 }
 
 var message = {
@@ -79,7 +89,7 @@ function printMessage() {
 }
 
 function train() {
-    message.message = "train";
+    message.message = "start";
     message.numLetters = parseInt(document.getElementById("numletters").value);
     message.learningRate = parseFloat(document.getElementById("learningrate").value);
     message.totalIterations = parseFloat(document.getElementById("iterations").value);
@@ -92,25 +102,35 @@ function train() {
 
 function continueTraining() {
     message.message = "continue";
+    message.updateInterval = parseInt(document.getElementById("updateinterval").value);
     socket.send(JSON.stringify(message));
+}
+
+function reset() {
+    message.message = "reset";
+    socket.send(JSON.stringify(message));
+    console.log("reset");
 }
 
 var socket = new WebSocket("ws://localhost:3000/ws");
 
 socket.onopen = function (event) {
-    console.log("Connection succesfullll!");
+    console.log("Successfully connected to " + socket.url);
 };
 
 socket.onmessage = function (event) {
     message = JSON.parse(event.data);
-    //console.log(message);
-    if (message.message == "update") {
-        console.log("update");
+    console.log("Message: " + message.message);
+    if (message.message == "update") {        
         updateWeightMapColor(message.neuralNet);
+        message.message = "continue";
+        socket.send(JSON.stringify(message));
     } else if (message.message == "done") {
         ;
+    } else if (message.message == "init") {
+        updateWeightMapColor(message.neuralNet);
     }
     
-    updateLetters(message.letters);
+    updateLetters(message.letters, message.winners);
     //console.log(event.data);
 };

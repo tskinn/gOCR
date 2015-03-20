@@ -79,6 +79,7 @@ func (letter Letter) getPixelsAsFloat() [][]float64 {
 
 func (message *Message) loadLetters(letters []Letter) {
 	message.Letters = make([][][]int, len(letters))
+	message.Winners = make([]string, len(letters))
 	for i := range letters {
 		message.Letters[i] = make([][]int, len(letters[i].Pixels))
 		for j:= range letters[i].Pixels {
@@ -87,13 +88,14 @@ func (message *Message) loadLetters(letters []Letter) {
 				message.Letters[i][j][k] = letters[i].Pixels[j][k]
 			}
 		}
+		message.Winners[i] += letters[i].Value
 	}
 }
 
 // Initialize WeightMap struct
-func (message *Message) init(letters, rows, cols int) {
+func (message *Message) init(letters, rows, cols int, seed int64) {
 	message.NumberOfLetters = letters    
-	r := rand.New(rand.NewSource(999))
+	r := rand.New(rand.NewSource(seed))
 	message.NeuralNet = make([][][]float64, letters)
 	for i := 0; i < letters; i++ {
 		(message.NeuralNet)[i] = make([][]float64, rows)
@@ -140,7 +142,7 @@ func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight float64) floa
 	// math.Acose(0.0) ====== 1.5707963267948966
 	//distanceAdjustment := math.Cos(float64(distance) / ((1.5) / math.Acos(0.0)))
 	// distanceAdjustment := math.Cos(float64(distance) / ((float64(longestDist) / 2.0) / math.Acos(0.0)))
-	distanceAdjustment := math.Cos(float64(distance) / ((1.25) / math.Acos(0.0)))
+	distanceAdjustment := math.Cos(float64(distance) / ((1.001) / math.Acos(0.0)))
 	
 	if distance >= 2 { // was 3
 		distanceAdjustment = -1.0
@@ -154,7 +156,7 @@ func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight float64) floa
 	}
 	result := float64(wWeight + (rate * difference * distanceAdjustment))
 	//log.Printf("Distance Adjustment:  %f\tDifference:  %f\tRate:  %f\tWeight: %f\tResult: %f", distanceAdjustment, difference, rate, result)
-	log.Printf("Weight: %f + Adjustment: %f", wWeight, (rate * difference * distanceAdjustment))
+	//log.Printf("Weight: %f + Adjustment: %f", wWeight, (rate * difference * distanceAdjustment))
 	return result
 }
 
@@ -204,14 +206,17 @@ func distToNeigh(letter [][]int, x, y int) int {
 }
 
 func (message *Message) train(lettersJSON []Letter) {
-	if message.CurrentIteration >= message.TotalIterations  || !message.IsInitialized {
+	if message.CurrentIteration >= message.TotalIterations {
+		message.Message = "done"
 		return
 	}
+	
 	itersToStop := message.CurrentIteration + message.UpdateInterval
-	if itersToStop > message.TotalIterations {
+	
+	if message.UpdateInterval < 1 || itersToStop > message.TotalIterations {
 		itersToStop = message.TotalIterations
 	}
-	log.Printf("Training from iterations %d to %d", message.CurrentIteration, itersToStop)
+	//log.Printf("Training from iterations %d to %d", message.CurrentIteration, itersToStop)
 	for i := message.CurrentIteration; i <= itersToStop; i++ { // why less than or equal to?
 		for j:= range message.Letters {
 			winner := message.getWinner(lettersJSON[j].getPixelsAsFloat())
