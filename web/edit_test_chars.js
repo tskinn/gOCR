@@ -26,7 +26,7 @@ var miniLetterCallback = function (event) {
     }
     //console.log(newSelLet.className);
     var oldSelLet = selectedLetter;
-    if (newSelLet.isSameNode(oldSelLet)) { 
+    if (newSelLet === oldSelLet) { 
         return; // nothing to do
     } else {
         if (selectedLetter) {

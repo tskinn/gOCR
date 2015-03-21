@@ -12,7 +12,7 @@ import (
 )
 
 ////////////////////////////////////////////////////////////////////////////////
-//  MESSAGE
+// MESSAGE - encapulates the neural network and any info sent to and from client
 ////////////////////////////////////////////////////////////////////////////////
 type Message struct {
 	Message string          `json:"message"`
@@ -110,19 +110,21 @@ func (message *Message) init(letters, rows, cols int, seed int64) {
 }
 
 // Calculate which output node is closest match to input
-func (message *Message) getWinner(letter [][]float64) int {
+func (message *Message) getWinner(letter [][]float64, prevWinners []bool) int {
 	winner := 0
 	top := 99999.9
 	for i := range message.NeuralNet { //i := 0; i < NUMLETTERS; i++ {
 		distance := 0.0
-		for j := range (message.NeuralNet)[i] { //0; j < NUMPIXELS; j++ {
-			for k := range (message.NeuralNet)[i][j] {
-				distance += (letter[j][k] - (message.NeuralNet)[i][j][k]) * (letter[j][k] - (message.NeuralNet)[i][j][k])
+		if !prevWinners[i] {
+			for j := range (message.NeuralNet)[i] { //0; j < NUMPIXELS; j++ {
+				for k := range (message.NeuralNet)[i][j] {
+					distance += (letter[j][k] - (message.NeuralNet)[i][j][k]) * (letter[j][k] - (message.NeuralNet)[i][j][k])
+				}
 			}
-		}
-		if math.Sqrt(distance) < top {
-			top = math.Sqrt(distance)
-			winner = i
+			if math.Sqrt(distance) < top {
+				top = math.Sqrt(distance)
+				winner = i
+			}
 		}
 	}
 	//fmt.Println(winner)
@@ -130,7 +132,7 @@ func (message *Message) getWinner(letter [][]float64) int {
 }
 
 // get updated individual weight
-func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight float64) float64 {
+func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight, neighborEffect float64) float64 {
 	// Most pixels will be within half of the lattice length of active pixel
 	longestDist := dRange / 2
 	
@@ -142,9 +144,9 @@ func getUpdatedWeight(distance, dRange, lWeight int, rate, wWeight float64) floa
 	// math.Acose(0.0) ====== 1.5707963267948966
 	//distanceAdjustment := math.Cos(float64(distance) / ((1.5) / math.Acos(0.0)))
 	// distanceAdjustment := math.Cos(float64(distance) / ((float64(longestDist) / 2.0) / math.Acos(0.0)))
-	distanceAdjustment := math.Cos(float64(distance) / ((1.001) / math.Acos(0.0)))
+	distanceAdjustment := math.Cos(float64(distance) / ((neighborEffect) / math.Acos(0.0)))
 	
-	if distance >= 2 { // was 3
+	if float64(distance) >= (neighborEffect + 1) { // was 2
 		distanceAdjustment = -1.0
 	}
 	// difference from 0.0 to weight is just the weight
@@ -176,7 +178,7 @@ func (message *Message) UpdateWinner(letter [][]int, winner int) {
 			distance := distToNeigh(letter, i, j)
 			weight := message.NeuralNet[winner][i][j]
 			lWeight := letter[i][j]
-			message.NeuralNet[winner][i][j] = getUpdatedWeight(distance, len(letter), lWeight, curRate, weight)
+			message.NeuralNet[winner][i][j] = getUpdatedWeight(distance, len(letter), lWeight, curRate, weight, message.NeighborEffect)
 		}
 	}
 }
@@ -218,9 +220,11 @@ func (message *Message) train(lettersJSON []Letter) {
 	}
 	//log.Printf("Training from iterations %d to %d", message.CurrentIteration, itersToStop)
 	for i := message.CurrentIteration; i <= itersToStop; i++ { // why less than or equal to?
-		for j:= range message.Letters {
-			winner := message.getWinner(lettersJSON[j].getPixelsAsFloat())
-			message.UpdateWinner(lettersJSON[winner].Pixels, winner)
+		prevWinners := make([]bool, len(message.Letters))
+		for j := range message.Letters {
+			winner := message.getWinner(lettersJSON[j].getPixelsAsFloat(), prevWinners)
+			message.UpdateWinner(lettersJSON[j].Pixels, winner)
+			prevWinners[winner] = true
 		}
 		message.CurrentIteration++
 	}

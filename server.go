@@ -94,6 +94,7 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 			message.TotalIterations = receiveMessage.TotalIterations
 			message.UpdateInterval = receiveMessage.UpdateInterval
 			message.LearningRate = receiveMessage.LearningRate
+			message.NeighborEffect = receiveMessage.NeighborEffect
 			message.Message = "update"
 			message.train(lettersJSON)
 			//conn.WriteJSON(message)
