@@ -51,6 +51,7 @@
 .letterguess {
     flex: 4;
     background-color: #91AA9D;
+    text-align: center;
 }
 
 .second_title {

@@ -112,6 +112,8 @@ var message = {
     neighborEffect: null
 };
 
+var letterLabels;
+
 function printMessage() {
     console.log("Message:      " + message.message);
     console.log("NumLetters:   " + message.numLetters);
@@ -170,10 +172,11 @@ socket.onmessage = function (event) {
         ;
     } else if (message.message == "init") {
         updateWeightMapColor(message.neuralNet);
+	letterLabels = message.winners;
     } else if (message.message == "results") {
 	loadResults(message.winners);
     }
     
-    updateLetters(message.letters, message.winners);
+    updateLetters(message.letters, letterLabels);
     //console.log(event.data);
 };
