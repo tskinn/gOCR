@@ -62,7 +62,40 @@ function  updateWeightMapColor (weights) {
 }
 
 function getLetters () {
-    ;
+    arrayLetter = [];
+
+    pixels = document.getElementsByClassName("char_pix");
+    count = 0;
+    for (letter = 0; letter < 26; letter++) {               ////////// hard coded values!!!
+	arrayLetter[letter] = [];
+	for (i = 0; i < 9; i++) {
+	    arrayLetter[letter][i] = [];
+	    for (j = 0; j < 9; j++) {
+		
+		arrayLetter[letter][i][j] = pixelColors.indexOf(pixels[count].style.backgroundColor);
+		count++;
+	    }
+	}
+    }
+    
+    console.log(arrayLetter);
+    return arrayLetter;
+}
+
+function getLetterNames () {
+    letterNames = [];
+    names = document.getElementsByClassName("charname");
+    for (i = 0; i < names.length; i++) {
+	letterNames[i] = names[i].innerHTML;
+    }
+    return letterNames;
+}
+
+function loadResults (winners) {
+    nodes = document.getElementsByClassName("letterguess");
+    for (i = 0; i < winners.length; i++) {
+	nodes[i].innerHTML = winners[i];
+    }
 }
 
 var message = {
@@ -112,6 +145,14 @@ function reset() {
     console.log("reset");
 }
 
+function test() {
+    message.message = "test";
+    message.letters = getLetters();
+    message.winners = getLetterNames();
+    socket.send(JSON.stringify(message));
+    console.log("testing");
+}
+
 var socket = new WebSocket("ws://localhost:3000/ws");
 
 socket.onopen = function (event) {
@@ -129,6 +170,8 @@ socket.onmessage = function (event) {
         ;
     } else if (message.message == "init") {
         updateWeightMapColor(message.neuralNet);
+    } else if (message.message == "results") {
+	loadResults(message.winners);
     }
     
     updateLetters(message.letters, message.winners);

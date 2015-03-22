@@ -74,6 +74,7 @@ func (letter Letter) getPixelsAsFloat() [][]float64 {
 			}
 		}
 	}
+	
 	return newLetter
 }
 
@@ -220,6 +221,7 @@ func (message *Message) train(lettersJSON []Letter) {
 	}
 	//log.Printf("Training from iterations %d to %d", message.CurrentIteration, itersToStop)
 	for i := message.CurrentIteration; i <= itersToStop; i++ { // why less than or equal to?
+		// used to make every output node a winner each iteration
 		prevWinners := make([]bool, len(message.Letters))
 		for j := range message.Letters {
 			winner := message.getWinner(lettersJSON[j].getPixelsAsFloat(), prevWinners)
@@ -231,6 +233,28 @@ func (message *Message) train(lettersJSON []Letter) {
 	log.Println("Successfully trained")
 }
 
+func (message *Message) test() {
+	letterNames := message.Winners
+	//log.Println(len(message.Letters))
+	message.Winners = make([]string, message.NumberOfLetters)
+	for i := 0; i < message.NumberOfLetters; i++ {
+		letter := Letter{}
+		letter.Rows = 9
+		letter.Columns = 9
+		//copy(letter.Pixels, message.Letters[i])
+		letter.Pixels = make([][]int, 9)
+		for j := range message.Letters[i] {
+			letter.Pixels[j] = make([]int, 9)
+			for k := range message.Letters[i][j] {
+				letter.Pixels[j][k] = message.Letters[i][j][k]
+			}
+			//copy(letter.Pixels[j], message.Letters[i][j])
+		}
+		temp := make([]bool, message.NumberOfLetters)
+		winner := message.getWinner(letter.getPixelsAsFloat(), temp)
+		message.Winners[winner] = letterNames[i]
+	}
+}
 
 // func main () {
 // 	fmt.Println("lehll")

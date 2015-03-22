@@ -111,9 +111,12 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 			message.Message = "init"
 			message.loadLetters(lettersJSON)
 			message.init(26, 9, 9, time.Now().UTC().UnixNano())		
+		} else if receiveMessage.Message == "test" {
+			message.Letters = receiveMessage.Letters
+			message.test()
+			message.Message = "results"
 		}
 		//log.Println(receiveMessage.Message)
-		
 		
 		conn.WriteJSON(message)
 	}
