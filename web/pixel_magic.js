@@ -94,7 +94,7 @@ function getLetterNames () {
 function loadResults (winners) {
     nodes = document.getElementsByClassName("letterguess");
     for (i = 0; i < winners.length; i++) {
-	nodes[i].innerHTML = winners[i];
+	nodes[i].innerHTML = winners[i].toUpperCase();
     }
 }
 
