@@ -10,7 +10,7 @@ Before installation:
    example:  
 <code>  
 mkdir $HOME/go  
-</code>
+</code>  
 <code>
 echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
 </code>
