@@ -8,17 +8,27 @@ Before installation:
  - Install golang on your system.
  - Create a directory for your GOPATH environment variable
    example:
-        mkdir $HOME/go
-        echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
+<code>  
+mkdir $HOME/go
+echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
+</code>
 
 Installation:
  - Install gorilla/sockets (GoCR uses websockets from this package)
-   go get github.com/gorilla/sockets
+<code>
+go get github.com/gorilla/sockets
+</code>
  - Install GoCR
-   go get github.com/tskinn/GoCR
+<code>
+go get github.com/tskinn/GoCR
+</code>
 
 Running GoCR:
  - Go to the GoCR source directory
-   cd $HOME/go/src/github.com/tskinn/GoCR
+<code>
+cd $HOME/go/src/github.com/tskinn/GoCR
+</code>
  - Run the server and the neuralnetwork
-   go run server.go neuralnet.go
+<code>
+go run server.go neuralnet.go
+</code>
