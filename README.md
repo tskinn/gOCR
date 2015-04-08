@@ -10,6 +10,8 @@ Before installation:
    example:  
 <code>  
 mkdir $HOME/go  
+</code>
+<code>
 echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
 </code>
 
