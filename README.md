@@ -34,3 +34,4 @@ cd $HOME/go/src/github.com/tskinn/GoCR
 <code>
 go run server.go neuralnet.go  
 </code>
+ - Open a browser and go to <code>localhost:3000</code>

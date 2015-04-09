@@ -15,6 +15,16 @@ function addEventListeners(classname, miniLetterCallback) {
     var divs = document.querySelectorAll("." + classname);
     for (var i = 0; i < divs.length; i++) {
         divs[i].addEventListener("click", miniLetterCallback);
+        divs[i].addEventListener("mouseenter", function(event) {
+            if (event.target.style.backgroundColor != "rgb(252, 255, 245)"){
+                event.target.style.backgroundColor = "rgb(62, 96, 111)";
+            }
+        });
+        divs[i].addEventListener("mouseleave", function(event) {
+            if (event.target.style.backgroundColor != "rgb(252, 255, 245)"){
+                event.target.style.backgroundColor = "rgb(209, 219, 189)";
+            }
+        });
     }
 }
 // load small character to big character
@@ -32,7 +42,7 @@ var miniLetterCallback = function (event) {
         if (selectedLetter) {
             oldSelLet.style.backgroundColor = '#D1DBBD';
         }      
-        newSelLet.style.backgroundColor = '#FCFFF5';
+        newSelLet.style.backgroundColor = 'rgb(252, 255, 245)';
         //loadToBigChar(newSelLet);
 	//copyLetter()
         copyLetter(newSelLet, document.querySelectorAll(".customc")[0]); // copy little letter to big

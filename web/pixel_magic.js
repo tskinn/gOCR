@@ -67,15 +67,15 @@ function getLetters () {
     pixels = document.getElementsByClassName("char_pix");
     count = 0;
     for (letter = 0; letter < 26; letter++) {               ////////// hard coded values!!!
-	arrayLetter[letter] = [];
-	for (i = 0; i < 9; i++) {
-	    arrayLetter[letter][i] = [];
-	    for (j = 0; j < 9; j++) {
-		
-		arrayLetter[letter][i][j] = pixelColors.indexOf(pixels[count].style.backgroundColor);
-		count++;
-	    }
-	}
+	     arrayLetter[letter] = [];
+	     for (i = 0; i < 9; i++) {
+	         arrayLetter[letter][i] = [];
+	         for (j = 0; j < 9; j++) {
+		          
+		          arrayLetter[letter][i][j] = pixelColors.indexOf(pixels[count].style.backgroundColor);
+		          count++;
+	         }
+	     }
     }
     
     console.log(arrayLetter);
@@ -86,7 +86,7 @@ function getLetterNames () {
     letterNames = [];
     names = document.getElementsByClassName("charname");
     for (i = 0; i < names.length; i++) {
-	letterNames[i] = names[i].innerHTML;
+	     letterNames[i] = names[i].innerHTML;
     }
     return letterNames;
 }
@@ -130,6 +130,7 @@ function train() {
     message.totalIterations = parseFloat(document.getElementById("iterations").value);
     message.updateInterval = parseInt(document.getElementById("updateinterval").value);
     //message.updateInterval = parseFloat(document.getElementById("iterations").value);
+    message.letters = getLetters();
     message.neighborEffect = parseFloat(document.getElementById("neighboreffect").value);
     socket.send(JSON.stringify(message));
     //printMessage();

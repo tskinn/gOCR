@@ -96,14 +96,15 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 			message.LearningRate = receiveMessage.LearningRate
 			message.NeighborEffect = receiveMessage.NeighborEffect
 			message.Message = "update"
-			message.train(lettersJSON)
+			message.Letters = receiveMessage.Letters
+			message.train()
 			//conn.WriteJSON(message)
 			
 			log.Println("Trained")
 		} else if receiveMessage.Message == "continue" {
 			message.UpdateInterval = receiveMessage.UpdateInterval
 			message.Message = "update"
-			message.train(lettersJSON)
+			message.train()
 
 			//conn.WriteJSON(message)
 		} else if receiveMessage.Message == "reset" {

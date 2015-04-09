@@ -62,12 +62,12 @@ func getLettersJSON(filename string) []Letter {
 }
 
 // Convert integer pixel representation to float64
-func (letter Letter) getPixelsAsFloat() [][]float64 {
-	newLetter := make([][]float64, letter.Rows)
+func getPixelsAsFloat(letter [][]int) [][]float64 {
+	newLetter := make([][]float64, len(letter))
 	for i := range newLetter {
-		newLetter[i] = make([]float64, letter.Columns)
+		newLetter[i] = make([]float64, len(letter[i]))
 		for j := range newLetter[i] {
-			if letter.Pixels[i][j] == 1 { // convert to floats
+			if letter[i][j] == 1 { // convert to floats
 				newLetter[i][j] = 1.0
 			} else {
 				newLetter[i][j] = 0.0 // probably not necesarry as is initd to 0.0
@@ -208,7 +208,7 @@ func distToNeigh(letter [][]int, x, y int) int {
 	return shortestDist
 }
 
-func (message *Message) train(lettersJSON []Letter) {
+func (message *Message) train() {
 	if message.CurrentIteration >= message.TotalIterations {
 		message.Message = "done"
 		return
@@ -224,8 +224,8 @@ func (message *Message) train(lettersJSON []Letter) {
 		// used to make every output node a winner each iteration
 		prevWinners := make([]bool, len(message.Letters))
 		for j := range message.Letters {
-			winner := message.getWinner(lettersJSON[j].getPixelsAsFloat(), prevWinners)
-			message.UpdateWinner(lettersJSON[j].Pixels, winner)
+			winner := message.getWinner(getPixelsAsFloat(message.Letters[j]), prevWinners)
+			message.UpdateWinner(message.Letters[j], winner)
 			prevWinners[winner] = true
 		}
 		message.CurrentIteration++
@@ -238,20 +238,20 @@ func (message *Message) test() {
 	//log.Println(len(message.Letters))
 	message.Winners = make([]string, message.NumberOfLetters)
 	for i := 0; i < message.NumberOfLetters; i++ {
-		letter := Letter{}
-		letter.Rows = 9
-		letter.Columns = 9
-		//copy(letter.Pixels, message.Letters[i])
-		letter.Pixels = make([][]int, 9)
-		for j := range message.Letters[i] {
-			letter.Pixels[j] = make([]int, 9)
-			for k := range message.Letters[i][j] {
-				letter.Pixels[j][k] = message.Letters[i][j][k]
-			}
-			//copy(letter.Pixels[j], message.Letters[i][j])
-		}
+		// letter := Letter{}
+		// letter.Rows = 9
+		// letter.Columns = 9
+		// //copy(letter.Pixels, message.Letters[i])
+		// letter.Pixels = make([][]int, 9)
+		// for j := range message.Letters[i] {
+		// 	letter.Pixels[j] = make([]int, 9)
+		// 	for k := range message.Letters[i][j] {
+		// 		letter.Pixels[j][k] = message.Letters[i][j][k]
+		// 	}
+		// 	//copy(letter.Pixels[j], message.Letters[i][j])
+		// }
 		temp := make([]bool, message.NumberOfLetters)
-		winner := message.getWinner(letter.getPixelsAsFloat(), temp)
+		winner := message.getWinner(getPixelsAsFloat(message.Letters[i]), temp)
 		message.Winners[winner] = letterNames[i]
 	}
 }
