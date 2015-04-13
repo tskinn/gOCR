@@ -4,15 +4,19 @@ var colorSpectrum = ["#0515DC", "#1A45BF", "#378399", "#4BAD7E", "#5BCF6A", "#81
 
 var pixelColors = ["rgb(145, 170, 157)", "rgb(25, 52, 65)"];
 
-console.log(letters.length);
-
+function eraseLetters () {
+    var divs = document.querySelectorAll(".letterguess");
+    for (var i = 0, len = divs.length; i < len; i++) {
+        divs[i].innerHTML = "";
+    }
+}
 
 function changeColor (letter, row, col, color) {
     var letters = document.querySelectorAll(".weights")[letter];
     var rows = letters.querySelectorAll(".weight_row")[row];
     var pixel = rows.querySelectorAll(".weight_pixel")[col];
     pixel.style.backgroundColor = color;
-}                                                                   //TODO combine these two functions
+}                                          //TODO combine these two functions
 
 function changeColorLetter (letter, row, col, color) {
     var letters = document.querySelectorAll(".char")[letter];
@@ -173,6 +177,7 @@ socket.onmessage = function (event) {
         ;
     } else if (message.message == "init") {
         updateWeightMapColor(message.neuralNet);
+        eraseLetters();
 	letterLabels = message.winners;
     } else if (message.message == "results") {
 	loadResults(message.winners);
