@@ -12,14 +12,11 @@ example:
 <code>echo "export GOPATH=$HOME/go" >> $HOME/.bashrc</code>
 
 ### Install:  
- 1. Install gorilla/sockets (GoCR uses websockets from this package)  
-<code>
-go get github.com/gorilla/sockets
-</code>
- 2. Install GoCR  
+#### Install GoCR  
 <code>
 go get github.com/tskinn/GoCR
 </code>
+This will also pull GoCR's dependency (Gorilla/sockets package)
 
 ### Running GoCR:  
  1. Go to the GoCR source directory  

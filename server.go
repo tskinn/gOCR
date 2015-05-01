@@ -1,12 +1,10 @@
 package main
 
 import (
-	//"encoding/json"
 	"github.com/gorilla/websocket"
 	"log"
 	"math/rand"
 	"net/http"
-	//"text/template"
 	"time"
 )
 
@@ -17,21 +15,7 @@ var (
 		WriteBufferSize: 1024,
 		CheckOrigin:     func(r *http.Request) bool { return true },
 	}
-	//homeTempl = template.Must(template.ParseFiles("console.html"))
 )
-
-
-// type WeightMap struct {
-// 	Message string `json:"message"`
-// 	Map [][][]float64   `json:"weightmap"`
-// 	Winners []string  `json:"winners"`
-// 	Letters [][][]int `json:"letters"`
-// 	NumberOfLetters int       `json:"numLetters"`
-// 	LearningRate float64 `json:"learningRate"`
-// 	TotalIterations int `json:"totalIterations"`
-// 	CurrentIteration int `json:"currentIteration"`
-// }
-
 
 
 type WeightMap [][][]float64
@@ -60,10 +44,8 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	//profile := Profile{"Alex", []string{"snowboarding", "programming"}}
 	weights := WeightMap{}
 	weights.init(26, 9, 9)
-	//js, err := json.Marshal(weights)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -78,10 +60,8 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 	message.init(26, 9, 9, time.Now().UTC().UnixNano())
 	conn.WriteJSON(message)
 	
-	//defer conn.Close()
-	//w.Header().Set("Content-Type", "application/json")
-	//w.Write(js)
-
+	defer conn.Close()
+	
 	for {
 		receiveMessage := &Message{}
 		err := conn.ReadJSON(receiveMessage)
@@ -98,15 +78,13 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 			message.Message = "update"
 			message.Letters = receiveMessage.Letters
 			message.train()
-			//conn.WriteJSON(message)
 			
 			log.Println("Trained")
 		} else if receiveMessage.Message == "continue" {
 			message.UpdateInterval = receiveMessage.UpdateInterval
 			message.Message = "update"
 			message.train()
-
-			//conn.WriteJSON(message)
+	
 		} else if receiveMessage.Message == "reset" {
 			message = Message{}
 			message.Message = "init"
@@ -117,7 +95,6 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 			message.test()
 			message.Message = "results"
 		}
-		//log.Println(receiveMessage.Message)
 		
 		conn.WriteJSON(message)
 	}
@@ -125,7 +102,6 @@ func serveWS(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("web")))
-	//http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", serveWS)
 	log.Println("Listening...")
 	if err := http.ListenAndServe(":3000", nil); err != nil {
